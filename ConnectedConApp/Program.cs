@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 // library is needed to read from config file 
 using System.Configuration;
+using System.Data;
 
 namespace ConnectedConApp
 {
@@ -23,24 +24,37 @@ namespace ConnectedConApp
     {
       SqlConnection northCon = null;
       SqlCommand customerCMD = null;
+      DataTable customersTable = null;
+
       try
       {
+        //northCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NorthConnection"].ConnectionString);
+
+        //SqlParameter[] sqlParameters = new SqlParameter[2];
+        //sqlParameters[0] = new SqlParameter("@City", "Panvel");
+        //sqlParameters[1] = new SqlParameter("@CustomerId", "JJJ");
+
+
+        //customerCMD = new SqlCommand("Update Customers set City=@City where CustomerId=@CustomerId", northCon);
+        //customerCMD.Parameters.AddRange(sqlParameters);
+        //Console.WriteLine($"customerCMD.CommandText: {customerCMD.CommandText}");
+        //Console.ReadKey(true);
+        //northCon.Open();
+        //int recEffected = customerCMD.ExecuteNonQuery();
+        //if(recEffected == 1)
+        //{
+        //  Console.WriteLine("Customers record updated ...");
+
+
         northCon = new SqlConnection(ConfigurationManager.ConnectionStrings["NorthConnection"].ConnectionString);
+        customerCMD = new SqlCommand("Select * from Customers", northCon);
 
-        SqlParameter[] sqlParameters = new SqlParameter[2];
-        sqlParameters[0] = new SqlParameter("@City", "Panvel");
-        sqlParameters[1] = new SqlParameter("@CustomerId", "JJJ");
+        customersTable.Load(customerCMD.ExecuteReader());
 
-
-        customerCMD = new SqlCommand("Update Customers set City=@City where CustomerId=@CustomerId", northCon);
-        customerCMD.Parameters.AddRange(sqlParameters);
-        Console.WriteLine($"customerCMD.CommandText: {customerCMD.CommandText}");
-        Console.ReadKey(true);
-        northCon.Open();
-        int recEffected = customerCMD.ExecuteNonQuery();
-        if(recEffected == 1)
+        foreach (DataRow item in customersTable.Rows)
         {
-          Console.WriteLine("Customers record updated ...");
+          Console.WriteLine($"CustomerId:  {item["CustomerID"]} -- {item["ContactName"]} -- {item["City"]}");
+
         }
       }
       catch (Exception ex)
